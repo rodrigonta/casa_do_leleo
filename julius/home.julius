@@ -1,0 +1,36 @@
+$("body").attr("id","page-top").attr("class","index");
+
+$(".form").submit(function(e){
+    $('#form_success').text("");
+    e.preventDefault();
+    var action = $(this).attr("action");
+
+    $.ajax({
+        url: action,
+        type: "POST",
+        data: $(this).serialize(),
+        success: function() {
+
+            // Cadastro com sucesso
+            $('#form_success').append("<div class='alert alert-success col-sm-12'>");
+            $('#form_success > .alert-success').append("<label>Cadastro realizado com sucesso");
+            $('#form_success > .alert-success').append("<button type='button' class='btn btn-primary pull-right' data-dismiss='modal' data-target='#login' data-toggle='modal' aria-hidden='true'>Entrar agora")
+
+            //reseta o formulario
+            $('.form').trigger("reset");
+
+        },
+        error: function() {
+
+            // Erro no Cadastro
+            $('#form_success').append("<div class='alert alert-danger col-sm-12'>");
+            $('#form_success > .alert-danger').append("<label>Desculpe, ocorreu um erro. Tente outra vez mais tarde!");
+
+            //reseta o formulario
+            $('.form').trigger("reset");
+
+        }
+    });
+
+});
+

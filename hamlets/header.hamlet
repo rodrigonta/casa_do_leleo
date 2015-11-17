@@ -1,0 +1,9 @@
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <img class="img-responsive" src=@{StaticR img_profile_png} alt="">
+                <div class="intro-text">
+                    <span class="name">Casa do Leléo
+                    <hr class="star-light">
+                    <span class="skills">A melhor casa de massagem da Baixada Santista
