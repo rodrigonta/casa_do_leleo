@@ -25,14 +25,9 @@
                      <!-- $ sessao <- lookupSession "_NOME"
                          $if (sessao == Nothing)
                             # show sessao} -->
-                    <a href=@{LoginR}>
-                       <button type="button" class="btn btn-default btn-sm">Entrar
-                <li class="page-scroll">
-                    <a href=@{UsuarioR}>
-                       <button type="button" class="btn btn-success btn-sm">Cadastra-se
+                       <button type="button" class="btn btn-default btn-sm" onclick="window.location.href='@{LoginR}'">Entrar
+                       <button type="button" class="btn btn-success btn-sm" onclick="window.location.href='@{UsuarioR}'">Cadastra-se
                      <!--    $else
                             Olá, # { show sessao}, -->
-                <li class="page-scroll">
-                    <a href=@{ByeR}>
-                       <button type="button" class="btn btn-info btn-sm">Sair
+                       <button type="button" class="btn btn-info btn-sm" onclick="window.location.href='@{ByeR}'">Sair
 
