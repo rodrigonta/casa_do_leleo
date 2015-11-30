@@ -42,7 +42,7 @@ formUsuario = renderDivsNoLabels $ Usuario <$>
         fsName = Just ("senha"),
         fsAttrs = [("placeholder","Senha"),("class","form-control")]
     } Nothing
-    
+
 formMassagista :: Form Massagista
 formMassagista = renderDivsNoLabels $ Massagista <$>
     areq textField FieldSettings{
@@ -111,7 +111,7 @@ wFormLogin route widget enctype = do
         toWidget $(luciusFile "lucius/imputs.lucius")
 
 wHead :: Widget
-wHead = do 
+wHead = do
     toWidgetHead [hamlet|
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -131,7 +131,7 @@ wHead = do
         });
         $("#email").focus();
     |]
-    $(whamletFile "hamlets/home/script.hamlet")
+    
 
 wNav :: Bool -> Widget
 wNav completa = do
@@ -143,12 +143,12 @@ wHome  lista = do
     wHead
     wNav True
     $(whamletFile "hamlets/home/header.hamlet")
-    $(whamletFile "hamlets/home/session_massagistas.hamlet")
-    $(whamletFile "hamlets/home/session_about.hamlet")
+    $(whamletFile "hamlets/home/massagistas_grid.hamlet")
+    $(whamletFile "hamlets/home/a_casa.hamlet")
     $(whamletFile "hamlets/home/footer.hamlet")
     $(whamletFile "hamlets/home/scroll_button.hamlet")
-    $(whamletFile "hamlets/home/massagistas.hamlet")
-    
+    $(whamletFile "hamlets/home/massagistas_modal.hamlet")
+    $(whamletFile "hamlets/home/script.hamlet")
 
 wListaUsuarios :: [ Entity Usuario ] -> Widget
 wListaUsuarios listaUsuarios = do

@@ -1,9 +1,0 @@
-<h1>
-    #{y}
-    $maybe mm <- msg
-        #{mm}
-    $nothing
-        <p> IHOUHOUUOFEHFUOEEFOUFEU
-    <form method=post action=@{x} enctype=#{enctype}>
-        ^{widget}
-        <input type="submit" value=#{val}>

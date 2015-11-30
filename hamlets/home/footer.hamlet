@@ -7,11 +7,13 @@
                     <h2>Onde Estamos
                     <hr>
             <div class="row">
+                <div class="col-sm-12">
+                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3645.411859155349!2d-46.31373148483064!3d-23.981229183116717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce025012ff1087%3A0x6248b864b7ec571d!2sFATEC+SANTOS+-+Rubens+Lara!5e0!3m2!1spt-BR!2sbr!4v1448913176993" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen>
                 <div class="footer-col col-md-4">
-                    <h3>Location
-                    <p>3481 Melrose Place<br>Beverly Hills, CA 90210
+                    <h3>Localização
+                    <p>Atrás da FATEC
                 <div class="footer-col col-md-4">
-                    <h3>Around the Web
+                    <h3>Na Web
                     <ul class="list-inline">
                         <li>
                             <a href="#" class="btn-social btn-outline">
@@ -29,11 +31,10 @@
                             <a href="#" class="btn-social btn-outline">
                                <i class="fa fa-fw fa-dribbble">
                 <div class="footer-col col-md-4">
-                    <h3>About Freelancer
-                    <p>Freelance is a free to use, open source Bootstrap theme created by 
-                       <a href="http://startbootstrap.com">Start Bootstrap.
+                    <h3>Sobre os manos que desenvolveram.
+                    <p>Tão por ai, de boa.
     <div class="footer-below">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    Copyright &copy; Your Website 2014
+                    Direitos &copy; Leleo Filmes & Rugal Produções 2015

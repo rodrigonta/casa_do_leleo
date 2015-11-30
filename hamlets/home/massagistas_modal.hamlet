@@ -1,0 +1,18 @@
+<!-- Portfolio Modals -->
+$forall Entity id massagista <- lista
+
+    <div class="portfolio-modal modal fade" id="portfolioModal_#{toPathPiece id}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-8 col-sm-offset-2">
+                                    <h3>#{massagistaNome massagista}
+                                    <hr class="star-primary">
+                                    <img src=@{StaticR img_massagistas_massagista_png} class="img-responsive img-centered" alt="">
+                                    <p>#{massagistaHabilidade massagista}

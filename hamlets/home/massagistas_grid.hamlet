@@ -1,0 +1,17 @@
+<!-- Portfolio Grid Section -->
+<section id="portfolio">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Massagistas
+                <hr class="star-primary">
+        <div class="row">
+            $forall Entity id m <- lista
+                <div class="col-sm-4 col-lg-4 text-center portfolio-item">
+                    <a href="#portfolioModal_#{toPathPiece id}" class="portfolio-link" data-toggle="modal">
+                        <h3>#{massagistaNome m}
+                        <div class="caption">
+                            <div class="caption-content">
+                                <i class="fa fa-search-plus fa-3x">
+                        <img src=@{StaticR img_massagistas_massagista_png} class="img-responsive" alt="">
+
