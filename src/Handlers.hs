@@ -13,6 +13,7 @@ import Data.Text
 import Data.Monoid
 import Text.Lucius
 import Text.Julius
+import Text.Hamlet
 
 import Database.Persist.Postgresql
 
@@ -27,7 +28,7 @@ formUsuario = renderDivsNoLabels $ Usuario <$>
         fsName = Just ("nome"),
         fsAttrs = [("placeholder","Nome"),("class","form-control")]
     } Nothing <*>
-    areq textField FieldSettings{
+    areq emailField FieldSettings{
         fsId = Just("email"),
         fsLabel = "Email",
         fsTooltip = Nothing,
@@ -41,17 +42,35 @@ formUsuario = renderDivsNoLabels $ Usuario <$>
         fsName = Just ("senha"),
         fsAttrs = [("placeholder","Senha"),("class","form-control")]
     } Nothing
-
-formLogin :: Form Usuario
-formLogin = renderDivsNoLabels $ Usuario <$>
-    areq hiddenField FieldSettings{
+    
+formMassagista :: Form Massagista
+formMassagista = renderDivsNoLabels $ Massagista <$>
+    areq textField FieldSettings{
         fsId = Just("nome"),
         fsLabel = "Nome",
         fsTooltip = Nothing,
         fsName = Just ("nome"),
         fsAttrs = [("placeholder","Nome"),("class","form-control")]
     } Nothing <*>
+    areq intField FieldSettings{
+        fsId = Just("idade"),
+        fsLabel = "Idade",
+        fsTooltip = Nothing,
+        fsName = Just ("idade"),
+        fsAttrs = [("placeholder","Idade"),("class","form-control")]
+    } Nothing <*>
     areq textField FieldSettings{
+        fsId = Just("descricao"),
+        fsLabel = "Descrição",
+        fsTooltip = Nothing,
+        fsName = Just ("descricao"),
+        fsAttrs = [("placeholder","Habilidades"),("class","form-control")]
+    } Nothing
+
+formLogin :: Form Usuario
+formLogin = renderDivsNoLabels $ Usuario <$>
+    lift (liftIO $ return "")<*>
+    areq emailField FieldSettings{
         fsId = Just("email"),
         fsLabel = "Email",
         fsTooltip = Nothing,
@@ -72,69 +91,89 @@ widgetForm x enctype widget y val = do
      $(whamletFile "codigos/form.hamlet")
      toWidget $(luciusFile "codigos/teste.lucius")
 
-wFormUsuario ::  Route Sitio -> Enctype -> Widget -> Widget
-wFormUsuario route enctype widget = do
+wFormUsuario ::  Route Sitio -> Widget -> Enctype -> Widget
+wFormUsuario route widget enctype = do
         msg <- getMessage
-        $(whamletFile "hamlets/cadastrar_usuario.hamlet")
+        $(whamletFile "hamlets/usuarios/usuario_cadastrar.hamlet")
         toWidget $(luciusFile "lucius/imputs.lucius")
 
-wFormLogin ::  Route Sitio -> Enctype -> Widget -> Widget
-wFormLogin route enctype widget = do
+wFormMassagista ::  Route Sitio -> Widget -> Enctype -> Widget
+wFormMassagista route widget enctype = do
         msg <- getMessage
-        $(whamletFile "hamlets/login.hamlet")
+        $(whamletFile "hamlets/massagistas/massagista_cadastrar.hamlet")
         toWidget $(luciusFile "lucius/imputs.lucius")
 
--- Como deixar arquivo.hamlet no Head sem criar widget
--- exemplo toWidgetHead $(whamletFile "hamlets/nav.hamlet")
+
+wFormLogin ::  Route Sitio -> Widget -> Enctype -> Widget
+wFormLogin route widget enctype = do
+        msg <- getMessage
+        toWidget $(whamletFile "hamlets/login/session_login.hamlet")
+        toWidget $(luciusFile "lucius/imputs.lucius")
 
 wHead :: Widget
-wHead = toWidgetHead [hamlet|
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href=@{StaticR css_bootstrap_min_css} rel="stylesheet"/>
-    <link href=@{StaticR css_freelancer_css} rel="stylesheet"/>
-    <link href=@{StaticR font_awesome_4_1_0_css_font_awesome_min_css} rel="stylesheet" type="text/css"/>
-|]
+wHead = do 
+    toWidgetHead [hamlet|
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href=@{StaticR template_css_bootstrap_min_css} rel="stylesheet"/>
+        <link href=@{StaticR template_css_freelancer_css} rel="stylesheet"/>
+        <link href=@{StaticR template_font_awesome_4_1_0_css_font_awesome_min_css} rel="stylesheet" type="text/css"/>
+    |]
+    toWidget [julius|
+        $("body").attr("id","page-top").attr("class","index");
+        $("html").attr("lang","pt-br");
+        $(".linha").hover(function(){
+            $(this).css("cursor","pointer");
+        });
+        $(".linha").click(function(){
+            window.location.href = $(this).data("id");
+        });
+        $("#email").focus();
+    |]
+    $(whamletFile "hamlets/home/script.hamlet")
 
+wNav :: Bool -> Widget
+wNav completa = do
+    usr <- lookupSession "_NOME"
+    $(whamletFile "hamlets/default/nav.hamlet")
 
-wHome :: Widget
-wHome = do
+wHome :: [Entity Massagista] -> Widget
+wHome  lista = do
     wHead
-    $(whamletFile "hamlets/nav.hamlet")
-    $(whamletFile "hamlets/header.hamlet")
-    $(whamletFile "hamlets/session_portifolio.hamlet")
-    $(whamletFile "hamlets/session_about.hamlet")
-    $(whamletFile "hamlets/session_contact.hamlet")
-    $(whamletFile "hamlets/footer.hamlet")
-    $(whamletFile "hamlets/scroll_button.hamlet")
-    $(whamletFile "hamlets/portifolio.hamlet")
-    $(whamletFile "hamlets/script.hamlet")
-    toWidget $(juliusFile "julius/home.julius")
+    wNav True
+    $(whamletFile "hamlets/home/header.hamlet")
+    $(whamletFile "hamlets/home/session_massagistas.hamlet")
+    $(whamletFile "hamlets/home/session_about.hamlet")
+    $(whamletFile "hamlets/home/footer.hamlet")
+    $(whamletFile "hamlets/home/scroll_button.hamlet")
+    $(whamletFile "hamlets/home/massagistas.hamlet")
+    
 
-wRestrita :: Widget
-wRestrita = do
+wListaUsuarios :: [ Entity Usuario ] -> Widget
+wListaUsuarios listaUsuarios = do
     wHead
-    $(whamletFile "hamlets/nav.hamlet")
-    $(whamletFile "hamlets/header.hamlet")
+    wNav False
+    msg <- getMessage
+    $(whamletFile "hamlets/usuarios/usuarios_listar.hamlet")
+    
 
 getHomeR :: Handler Html
 getHomeR = do
-           (wF1,eF1) <- generateFormPost formUsuario
-           (wF2,eF2) <- generateFormPost formLogin
+           lista <- runDB $ selectList [] [Asc MassagistaNome]
            defaultLayout $ do
                setTitle "Casa do Leléo"
-               wHome
-               (wFormUsuario UsuarioR eF1 wF1)
-               (wFormLogin LoginR eF2 wF2)
+               wHome lista
 
-
-{-- Não utilizado devido o form de login está na ModalLogin
 getLoginR :: Handler Html
 getLoginR = do
-    (wid,enc) <- generateFormPost formUsuario
-    defaultLayout $ widgetForm LoginR enc wid "" "Log in"
---}
+    (w,e) <- generateFormPost formLogin
+    defaultLayout $ do
+        setTitle "Login"
+        wHead
+        wNav False
+        (wFormLogin LoginR w e)
+
 
 postLoginR :: Handler Html
 postLoginR = do
@@ -144,46 +183,128 @@ postLoginR = do
             usuario <- runDB $ selectFirst [UsuarioEmail ==. usuarioEmail usr, UsuarioSenha ==. usuarioSenha usr ] []
             case usuario of
                 Just (Entity uid usr) -> do
-                    setSession "_EMAIL" (usuarioEmail usr)
+                    setSession "_NOME" (usuarioNome usr)
                     redirect HomeR
                 Nothing -> do
-                    setMessage $ [shamlet| Invalid user |]
-                    redirect HomeR
-        _ -> redirect HomeR
+                    setMessage $ [shamlet| Usuário Inválido! |]
+                    redirect LoginR
+        _ -> redirect LoginR
 
+-- ------------ USUARIOS
 
-getRestritaR :: Handler Html
-getRestritaR = defaultLayout $ do
-        wRestrita
+getUsuarioCadastrarR :: Handler Html
+getUsuarioCadastrarR = do
+    (w,e) <- generateFormPost formUsuario
+    defaultLayout $ do
+        setTitle "Cadastro de Usuario"
+        wHead
+        wNav False
+        (wFormUsuario UsuarioCadastrarR w e)
 
-
-getUsuarioR :: Handler Html
-getUsuarioR = do
-    (wid,enc) <- generateFormPost formUsuario
-    defaultLayout $ widgetForm UsuarioR enc wid "Cadastro de Usuarios" "Cadastrar"
-
-getImgR :: Handler Html
-getImgR = defaultLayout [whamlet| <img src=@{StaticR codigos_empolgou_jpg}> |]
-
-postUsuarioR :: Handler Html
-postUsuarioR = do
+postUsuarioCadastrarR :: Handler Html
+postUsuarioCadastrarR = do
     ((result,_),_) <- runFormPost formUsuario
     case result of
         FormSuccess usr -> do
             runDB $ insert usr
-            setMessage $ [shamlet| <p> Usuario inserido com sucesso! |]
-            redirect UsuarioR
-        _ -> redirect UsuarioR
+            setMessage $ [shamlet| Usuario inserido com sucesso! |]
+            redirect UsuarioCadastrarR
+        _ -> redirect UsuarioCadastrarR
 
-getListUserR :: Handler Html
-getListUserR = do
-    listaU <- runDB $ selectList [] [Asc UsuarioNome]
-    defaultLayout $(whamletFile "codigos/list.hamlet")
+getUsuarioR :: UsuarioId -> Handler Html
+getUsuarioR uid = do    
+    usr <- runDB $ selectFirst [UsuarioId ==. uid] []
+    case usr of
+        Nothing -> redirect ListarUsuariosR
+        Just usr -> do
+            defaultLayout $ do
+                setTitle "Usuario"
+                wHead
+                wNav False
+                $(whamletFile "hamlets/usuarios/usuario.hamlet")
 
-getByeR :: Handler Html
-getByeR = do
-    deleteSession "_ID"
-    defaultLayout [whamlet| BYE! |]
+getUsuarioExcluirR :: UsuarioId -> Handler Html
+getUsuarioExcluirR id = do
+    runDB $ get404 id
+    runDB $ delete $ id
+    setMessage $ [shamlet| Registro excluído com sucesso! |]
+    redirect ListarUsuariosR
+
+getListarUsuariosR :: Handler Html
+getListarUsuariosR = do
+    listaUsuarios <- runDB $ selectList [] [Asc UsuarioNome]    
+    defaultLayout $ do
+        setTitle "Lista de Usuários"
+        wListaUsuarios listaUsuarios
+
+-- ------------ MASSAGISTAS
+
+getMassagistaCadastrarR :: Handler Html
+getMassagistaCadastrarR = do
+    (w,e) <- generateFormPost formMassagista
+    defaultLayout $ do
+        setTitle "Cadastro de Massagista"
+        wHead
+        wNav False
+        (wFormMassagista MassagistaCadastrarR w e)
+
+postMassagistaCadastrarR :: Handler Html
+postMassagistaCadastrarR = do
+    ((result,_),_) <- runFormPost formMassagista
+    case result of
+        FormSuccess usr -> do
+            runDB $ insert usr
+            setMessage $ [shamlet| Massagista inserida com sucesso! |]
+            -- redireciona para a massagista cadastrada
+            -- redirect $ MassagistaR usrId 
+            redirect MassagistaCadastrarR
+        _ -> redirect MassagistaCadastrarR
+
+getMassagistaR :: MassagistaId -> Handler Html
+getMassagistaR uid = do    
+    registro <- runDB $ selectFirst [MassagistaId ==. uid] []
+    case registro of
+        Nothing -> redirect ListarMassagistasR
+        Just registro -> do
+            defaultLayout $ do
+                setTitle "Massagista"
+                wHead
+                wNav False
+                $(whamletFile "hamlets/massagistas/massagista.hamlet")
+
+getMassagistaExcluirR :: MassagistaId -> Handler Html
+getMassagistaExcluirR id = do
+    runDB $ get404 id
+    runDB $ delete $ id
+    setMessage $ [shamlet| Registro excluído com sucesso! |]
+    redirect ListarMassagistasR
+
+getListarMassagistasR :: Handler Html
+getListarMassagistasR = do
+    lista <- runDB $ selectList [] [Asc MassagistaNome]
+    msg <- getMessage
+    defaultLayout $ do
+        setTitle "Lista de Massagistas"
+        wHead
+        wNav False
+        $(whamletFile "hamlets/massagistas/massagistas_listar.hamlet")
+
+getImgR :: Handler Html
+getImgR = defaultLayout [whamlet| <img src=@{StaticR codigos_empolgou_jpg}> |]
+
+
+getLogoutR :: Handler Html
+getLogoutR = do
+    deleteSession "_NOME"
+    defaultLayout $ do
+        setTitle "Lista de Massagistas"
+        wHead
+        wNav False
+        $(whamletFile "hamlets/logout/logout.hamlet")
+        toWidgetHead [julius|
+            setTimeout( "window.location = '@{HomeR}'", 5000);
+        |]
+
 
 getAdminR :: Handler Html
 getAdminR = do defaultLayout [whamlet| Bem vindo admin |]

@@ -1,0 +1,30 @@
+<!-- Massagista -->
+<section style="padding: 200px 0px">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Massagista
+                <hr class="star-primary">
+                <span>Ai ai, assim não dá...
+                <p>&nbsp;
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+                <div class="table-responsive well">
+                    <table class="table">
+                        <tr>
+                            <th>Nome:
+                            <td>#{massagistaNome $ entityVal registro}
+                        <tr>
+                            <th>Idade:
+                            <td>#{massagistaIdade $ entityVal registro}
+                        <tr>
+                            <th>Habilidade:
+                            <td>#{massagistaHabilidade $ entityVal registro}
+
+            <div class="col-lg-6 col-lg-offset-3">
+                <div class="col-xs-4">
+                     <a href=@{ListarMassagistasR} class="btn btn-default btn-lg btn-block">Voltar a Lista
+                <div class="col-xs-4">
+                     <a href=@{ListarUsuariosR} class="btn btn-warning btn-lg btn-block disabled">Editar
+                <div class="col-xs-4">
+                     <a href=@{MassagistaExcluirR $ entityKey registro}  class="btn btn-success btn-lg btn-block">Excluir

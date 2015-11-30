@@ -1,0 +1,59 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation
+              <span class="icon-bar">
+              <span class="icon-bar">
+              <span class="icon-bar">
+          $if (completa)
+            <a class="navbar-brand" href="#page-top">Casa do Leléo
+          $else
+            <a class="navbar-brand" href=@{HomeR}>Casa do Leléo
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="hidden">
+                  <a href="#page-top">
+                $if (completa)
+                    <li class="page-scroll">
+                      <a href="#portfolio">Massagistas
+                    <li class="page-scroll">
+                      <a href="#about">A Casa
+                    <li class="page-scroll">
+                      <a href="#footer">Onde Estamos
+                $else
+                $maybe nome <- usr
+                    <!-- se houver sessão -->
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color:F00;">
+                         #{nome}
+                         <span class="caret">
+                      <ul class="dropdown-menu" style="font-size:12px;">
+                        $if nome == "Admin"
+                            <li>
+                               <a href=@{HomeR}>Relatório Massagista / Usuário
+
+                            <li role="separator" class="divider">
+                            <li>
+                               <a href=@{ListarUsuariosR}>Lista de Usuários
+                            <li>
+                            <li role="separator" class="divider">
+                            <li>
+                               <a href=@{ListarMassagistasR}>Lista de Massagistas
+                            <li>
+                               <a href=@{MassagistaCadastrarR}>Cadastrar Massagistas
+                            <li role="separator" class="divider">
+                        <li>
+                           <a href=@{HomeR}>Ver Agenda
+                        <li>
+                           <a href=@{HomeR}>Voltar a Home
+                        <li>
+                           <a href=@{LogoutR}>Sair
+
+                $nothing
+                    <!-- se nao houver sessão -->
+                    <li class="page-scroll">
+                         <button type="button" class="btn btn-default btn-sm" onclick="window.location.href='@{LoginR}'">Entrar
+                         <button type="button" class="btn btn-success btn-sm" onclick="window.location.href='@{UsuarioCadastrarR}'">Cadastra-se

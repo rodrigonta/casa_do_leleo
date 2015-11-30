@@ -1,0 +1,29 @@
+<!-- Lista de Massagistas -->
+<section style="padding: 200px 0px">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Lista de Massagistas
+                <hr class="star-primary">
+                <p>&nbsp;
+
+            $maybe mm <- msg                   
+                <div class="col-lg-12 text-center">
+                    <div class="alert alert-success col-sm-12">
+                        <p class="pull-left">#{mm}
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <div class="table-responsive">
+                         <table class="table table-condensed table-striped table-hover">
+                             <thead>
+                                <tr>
+                                    <th>Nome
+                                    <th>Idade
+                                    <th>Habilidades
+                             <tbody>
+                                $forall Entity id massagista <- lista
+                                    <tr class="linha" data-id=@{MassagistaR id}>
+                                        <td>#{massagistaNome massagista}
+                                        <td>#{massagistaIdade massagista}
+                                        <td>#{massagistaHabilidade massagista}

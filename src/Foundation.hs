@@ -28,7 +28,15 @@ Usuario
    email Text
    senha Text
    deriving Show
-
+Massagista
+   nome Text
+   idade Int
+   habilidade Text
+Agenda
+    massagistaid
+    usuarioid
+    data UTCTime
+    hora UTCTime
 |]
 
 mkYesodData "Sitio" pRoutes
@@ -41,19 +49,17 @@ instance YesodPersist Sitio where
        runSqlPool f pool
 
 instance Yesod Sitio where
-    authRoute _ = Just $ HomeR
-    isAuthorized LoginR _ = return Authorized
-    isAuthorized HomeR _ = return Authorized
-    isAuthorized AdminR _ = isAdmin
-    isAuthorized RestritaR _ = isUser
-    isAuthorized _ _ = return Authorized
-
+  authRoute _ = Just $ LoginR
+  isAuthorized AdminR _ = isAdmin
+  -- isAuthorized RestritaR _ = isUser
+  isAuthorized _ _ = return Authorized
+{-- 
 isUser = do
     mu <- lookupSession "_EMAIL"
     return $ case mu of
       Nothing -> AuthenticationRequired
       Just _ -> Authorized
-
+--}
 
 isAdmin = do
   mu <- lookupSession "_EMAIL"
