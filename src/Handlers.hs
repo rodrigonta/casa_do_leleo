@@ -67,6 +67,31 @@ formMassagista = renderDivsNoLabels $ Massagista <$>
         fsAttrs = [("placeholder","Habilidades"),("class","form-control")]
     } Nothing
 
+formMassagem :: Form Massagem
+formMassagem = renderDivsNoLabels $ Massagem <$>    
+    areq(selectField usuarios) FieldSettings{
+        fsId = Just("nome"),
+        fsLabel = "Nome",
+        fsTooltip = Nothing,
+        fsName = Just ("nome"),
+        fsAttrs = [("placeholder","Nome"),("class","form-control")]
+    } Nothing <*>
+    areq (selectField massagistas) FieldSettings{
+        fsId = Just("categoria"),
+        fsLabel = "Categoria",
+        fsTooltip = Nothing,
+        fsName = Just ("categoria"),
+        fsAttrs = [("placeholder","Categoria"),("class","form-control")]
+    } Nothing
+
+massagistas = do
+       entidades <- runDB $ selectList [] [Asc MassagistaNome] 
+       optionsPairs $ fmap (\ent -> (massagistaNome $ entityVal ent, entityKey ent)) entidades
+
+usuarios = do
+       entidades <- runDB $ selectList [] [Asc UsuarioNome] 
+       optionsPairs $ fmap (\ent -> (usuarioNome $ entityVal ent, entityKey ent)) entidades
+
 formLogin :: Form Usuario
 formLogin = renderDivsNoLabels $ Usuario <$>
     lift (liftIO $ return "")<*>
@@ -85,23 +110,11 @@ formLogin = renderDivsNoLabels $ Usuario <$>
         fsAttrs = [("placeholder","Senha"),("class","form-control")]
     } Nothing
 
-wFormUsuario ::  Route Sitio -> Widget -> Enctype -> Widget
-wFormUsuario route widget enctype = do
-        msg <- getMessage
-        $(whamletFile "hamlets/usuarios/usuario_cadastrar.hamlet")
-        toWidget $(luciusFile "lucius/imputs.lucius")
 
-wFormMassagista ::  Route Sitio -> Widget -> Enctype -> Widget
-wFormMassagista route widget enctype = do
-        msg <- getMessage
-        $(whamletFile "hamlets/massagistas/massagista_cadastrar.hamlet")
-        toWidget $(luciusFile "lucius/imputs.lucius")
-
-
-wFormLogin ::  Route Sitio -> Widget -> Enctype -> Widget
-wFormLogin route widget enctype = do
-        msg <- getMessage
-        toWidget $(whamletFile "hamlets/login/session_login.hamlet")
+-- -- -- -- -- FORMULÁRIO GENÉRICO
+wForm :: Widget -> Widget
+wForm hamlet = do
+        hamlet
         toWidget $(luciusFile "lucius/imputs.lucius")
 
 wHead :: Widget
@@ -125,49 +138,40 @@ wHead = do
         });
         $("#email").focus();
     |]
-    
 
 wNav :: Bool -> Widget
 wNav completa = do
     usr <- lookupSession "_NOME"
     $(whamletFile "hamlets/default/nav.hamlet")
-
-wHome :: [Entity Massagista] -> Widget
-wHome  lista = do
-    wHead
-    wNav True
-    $(whamletFile "hamlets/home/header.hamlet")
-    $(whamletFile "hamlets/home/massagistas_grid.hamlet")
-    $(whamletFile "hamlets/home/a_casa.hamlet")
-    $(whamletFile "hamlets/home/footer.hamlet")
-    $(whamletFile "hamlets/home/scroll_button.hamlet")
-    $(whamletFile "hamlets/home/massagistas_modal.hamlet")
-    $(whamletFile "hamlets/home/script.hamlet")
-
-wListaUsuarios :: [ Entity Usuario ] -> Widget
-wListaUsuarios listaUsuarios = do
-    wHead
-    wNav False
-    msg <- getMessage
-    $(whamletFile "hamlets/usuarios/usuarios_listar.hamlet")
-    
+    case completa of 
+        False -> $(whamletFile "hamlets/home/script.hamlet")
+        _ -> [whamlet| |]
 
 getHomeR :: Handler Html
 getHomeR = do
-           lista <- runDB $ selectList [] [Asc MassagistaNome]
-           defaultLayout $ do
-               setTitle "Casa do Leléo"
-               wHome lista
+        lista <- runDB $ selectList [] [Asc MassagistaNome]
+        defaultLayout $ do
+            setTitle "Casa do Leléo"
+            wHead
+            wNav True
+            $(whamletFile "hamlets/home/header.hamlet")
+            $(whamletFile "hamlets/home/massagistas_grid.hamlet")
+            $(whamletFile "hamlets/home/a_casa.hamlet")
+            $(whamletFile "hamlets/home/footer.hamlet")
+            $(whamletFile "hamlets/home/scroll_button.hamlet")
+            $(whamletFile "hamlets/home/massagistas_modal.hamlet")
+            $(whamletFile "hamlets/home/script.hamlet")
 
 getLoginR :: Handler Html
 getLoginR = do
-    (w,e) <- generateFormPost formLogin
+    (widget,enctype) <- generateFormPost formLogin
+    msg <- getMessage
+    let route = LoginR
     defaultLayout $ do
         setTitle "Login"
         wHead
         wNav False
-        (wFormLogin LoginR w e)
-
+        wForm $(whamletFile "hamlets/login/login.hamlet")
 
 postLoginR :: Handler Html
 postLoginR = do
@@ -188,12 +192,14 @@ postLoginR = do
 
 getUsuarioCadastrarR :: Handler Html
 getUsuarioCadastrarR = do
-    (w,e) <- generateFormPost formUsuario
+    (widget,enctype) <- generateFormPost formUsuario
+    msg <- getMessage
+    let route = UsuarioCadastrarR
     defaultLayout $ do
         setTitle "Cadastro de Usuario"
         wHead
         wNav False
-        (wFormUsuario UsuarioCadastrarR w e)
+        wForm $(whamletFile "hamlets/usuarios/usuario_cadastrar.hamlet")
 
 postUsuarioCadastrarR :: Handler Html
 postUsuarioCadastrarR = do
@@ -226,21 +232,27 @@ getUsuarioExcluirR id = do
 
 getListarUsuariosR :: Handler Html
 getListarUsuariosR = do
-    listaUsuarios <- runDB $ selectList [] [Asc UsuarioNome]    
+    listaUsuarios <- runDB $ selectList [] [Asc UsuarioNome]
+    msg <- getMessage
     defaultLayout $ do
-        setTitle "Lista de Usuários"
-        wListaUsuarios listaUsuarios
+        setTitle "Lista de Massagistas"
+        wHead
+        wNav False
+        $(whamletFile "hamlets/usuarios/usuarios_listar.hamlet")
+
 
 -- ------------ MASSAGISTAS
 
 getMassagistaCadastrarR :: Handler Html
 getMassagistaCadastrarR = do
-    (w,e) <- generateFormPost formMassagista
+    (widget,enctype) <- generateFormPost formMassagista
+    msg <- getMessage
+    let route = MassagistaCadastrarR
     defaultLayout $ do
         setTitle "Cadastro de Massagista"
         wHead
         wNav False
-        (wFormMassagista MassagistaCadastrarR w e)
+        wForm $(whamletFile "hamlets/massagistas/massagista_cadastrar.hamlet")
 
 postMassagistaCadastrarR :: Handler Html
 postMassagistaCadastrarR = do
@@ -283,6 +295,44 @@ getListarMassagistasR = do
         wNav False
         $(whamletFile "hamlets/massagistas/massagistas_listar.hamlet")
 
+-- ------------ AGENDA
+{--
+getAgendarR :: UsuarioId -> Handler Html
+getAgendarR uid = do
+    registro <- runDB $ selectFirst [UsuarioId ==. uid] []
+    case registro of
+        Nothing -> redirect HomeR
+        Just registro -> do
+            (w,e) <- generateFormPost $ formAgenda $ entityKey registro
+            defaultLayout $ do
+                setTitle "Cadastro de Massagista"
+                wHead
+                wNav False
+                (wFormAgenda (AgendarR uid) w e)
+--}
+
+-- ------------ Massagens
+
+getMassagemCadastrarR :: Handler Html
+getMassagemCadastrarR = do
+    (widget,enctype) <- generateFormPost formMassagem
+    msg <- getMessage
+    let route = MassagemCadastrarR
+    defaultLayout $ do
+        setTitle "Cadastro de Massagem"
+        wHead
+        wNav False
+        wForm $(whamletFile "hamlets/massagens/massagem_cadastrar.hamlet")
+
+postMassagemCadastrarR :: Handler Html
+postMassagemCadastrarR = do
+    ((result,_),_) <- runFormPost formMassagem
+    case result of
+        FormSuccess usr -> do
+            runDB $ insert usr
+            setMessage $ [shamlet| Massagem inserida com sucesso! |]            
+            redirect MassagemCadastrarR
+        _ -> redirect MassagemCadastrarR
 
 getLogoutR :: Handler Html
 getLogoutR = do
@@ -296,6 +346,19 @@ getLogoutR = do
             setTimeout( "window.location = '@{HomeR}'", 5000);
         |]
 
+getRelMassagensR :: Handler Html
+getRelMassagensR = do
+    massagens <- runDB $ (rawSql "SELECT ??, ??, ?? \
+                \ FROM massagem \
+                \ INNER JOIN usuario       ON massagem.uid = usuario.id \
+                \ INNER JOIN massagista    ON massagem.mid = massagista.id \
+                \"[])::Handler [(Entity Massagem, Entity Usuario, Entity Massagista)]
+    msg <- getMessage
+    defaultLayout $ do
+        setTitle "Lista de Massagistas"
+        wHead
+        wNav False
+        $(whamletFile "hamlets/relatorios/massagens.hamlet")
 
 getAdminR :: Handler Html
 getAdminR = do defaultLayout [whamlet| Bem vindo admin |]

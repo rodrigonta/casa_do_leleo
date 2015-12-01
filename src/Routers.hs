@@ -17,6 +17,10 @@ pRoutes = [parseRoutes|
    /massagistas/delete/#MassagistaId MassagistaExcluirR GET
    /massagistas/all ListarMassagistasR GET
 
+   /massagens/insert MassagemCadastrarR GET POST
+   
+   /relatorios/massagens RelMassagensR GET
+
    /static StaticR Static getStatic   
    /login LoginR GET POST
    /logout LogoutR GET

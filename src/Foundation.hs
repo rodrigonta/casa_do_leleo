@@ -2,6 +2,7 @@
              TemplateHaskell, GADTs, FlexibleContexts,
              MultiParamTypeClasses, DeriveDataTypeable,
              GeneralizedNewtypeDeriving, ViewPatterns #-}
+
 module Foundation where
 import Routers
 import Yesod
@@ -10,7 +11,6 @@ import Data.Text
 import Control.Applicative
 import Data.Text (Text)
 import Yesod
-import Data.Time (UTCTime, getCurrentTime)
 import Control.Monad.Logger (runStdoutLoggingT)
 
 import Database.Persist.Postgresql
@@ -32,11 +32,11 @@ Massagista
    nome Text
    idade Int
    habilidade Text
-Agenda
-    massagistaid
-    usuarioid
-    data UTCTime
-    hora UTCTime
+   deriving Show
+Massagem
+    uid UsuarioId
+    mid MassagistaId
+    deriving Show
 |]
 
 mkYesodData "Sitio" pRoutes
@@ -51,18 +51,20 @@ instance YesodPersist Sitio where
 instance Yesod Sitio where
   authRoute _ = Just $ LoginR
   isAuthorized AdminR _ = isAdmin
-  -- isAuthorized RestritaR _ = isUser
-  isAuthorized _ _ = return Authorized
-{-- 
+  isAuthorized HomeR _ = return Authorized
+  isAuthorized LogoutR _ = return Authorized
+  isAuthorized _ _ = isUser
+
+
 isUser = do
-    mu <- lookupSession "_EMAIL"
+    mu <- lookupSession "_NOME"
     return $ case mu of
       Nothing -> AuthenticationRequired
       Just _ -> Authorized
---}
+
 
 isAdmin = do
-  mu <- lookupSession "_EMAIL"
+  mu <- lookupSession "_NOME"
   return $ case mu of
       Nothing -> AuthenticationRequired
       Just "admin" -> Authorized
