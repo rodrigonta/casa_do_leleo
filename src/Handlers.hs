@@ -85,12 +85,6 @@ formLogin = renderDivsNoLabels $ Usuario <$>
         fsAttrs = [("placeholder","Senha"),("class","form-control")]
     } Nothing
 
-widgetForm :: Route Sitio -> Enctype -> Widget -> Text -> Text -> Widget
-widgetForm x enctype widget y val = do
-     msg <- getMessage
-     $(whamletFile "codigos/form.hamlet")
-     toWidget $(luciusFile "codigos/teste.lucius")
-
 wFormUsuario ::  Route Sitio -> Widget -> Enctype -> Widget
 wFormUsuario route widget enctype = do
         msg <- getMessage
@@ -288,9 +282,6 @@ getListarMassagistasR = do
         wHead
         wNav False
         $(whamletFile "hamlets/massagistas/massagistas_listar.hamlet")
-
-getImgR :: Handler Html
-getImgR = defaultLayout [whamlet| <img src=@{StaticR codigos_empolgou_jpg}> |]
 
 
 getLogoutR :: Handler Html

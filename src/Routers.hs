@@ -7,18 +7,17 @@ import Yesod.Static
 pRoutes = [parseRoutes|
    / HomeR GET
 
-   /usuarios/cadastrar UsuarioCadastrarR GET POST
-   /usuarios/usuario/#UsuarioId UsuarioR GET
-   /usuarios/excluir/#UsuarioId UsuarioExcluirR GET
-   /usuarios/listar ListarUsuariosR GET
+   /usuarios/insert UsuarioCadastrarR GET POST
+   /usuarios/select/#UsuarioId UsuarioR GET
+   /usuarios/delete/#UsuarioId UsuarioExcluirR GET
+   /usuarios/all ListarUsuariosR GET
 
-   /massagistas/cadastrar MassagistaCadastrarR GET POST
-   /massagistas/massagista/#MassagistaId MassagistaR GET
-   /massagistas/excluir/#MassagistaId MassagistaExcluirR GET
-   /massagistas/listar ListarMassagistasR GET
+   /massagistas/insert MassagistaCadastrarR GET POST
+   /massagistas/select/#MassagistaId MassagistaR GET
+   /massagistas/delete/#MassagistaId MassagistaExcluirR GET
+   /massagistas/all ListarMassagistasR GET
 
-   /static StaticR Static getStatic
-   /ima ImgR GET
+   /static StaticR Static getStatic   
    /login LoginR GET POST
    /logout LogoutR GET
    /admin AdminR GET
