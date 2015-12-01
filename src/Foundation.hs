@@ -53,15 +53,15 @@ instance Yesod Sitio where
   isAuthorized AdminR _ = isAdmin
   isAuthorized HomeR _ = return Authorized
   isAuthorized LogoutR _ = return Authorized
-  isAuthorized _ _ = isUser
+  isAuthorized _ _ = return Authorized
 
-
+{--
 isUser = do
     mu <- lookupSession "_NOME"
     return $ case mu of
       Nothing -> AuthenticationRequired
       Just _ -> Authorized
-
+--}
 
 isAdmin = do
   mu <- lookupSession "_NOME"
